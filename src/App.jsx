@@ -1,28 +1,71 @@
-import { useState } from 'react'
+import { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import HeroRing from './components/HeroRing';
+import StockGrid from './components/StockGrid';
+import ItemView from './components/ItemView';
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [view, setView] = useState('hero');
+  const [selected, setSelected] = useState(null);
+
+  const items = [
+    {
+      id: 'r1',
+      title: 'Obsidian Hood — Mark I',
+      type: 'Hoodie / Relic',
+      status: 'available',
+      description:
+        'Forged from void and echo. The ring fractures but never yields. Matte black fibers with distressed weave; minimal mark hidden in the seams.',
+    },
+    {
+      id: 'r2',
+      title: 'Signal Tee — Ghost Print',
+      type: 'Tee / Relic',
+      status: 'soldout',
+      description:
+        'An omen in static. Ink like burnt film; design emerges only in certain light. The message glitched, the prophecy intact.',
+    },
+    {
+      id: 'r3',
+      title: 'Apex Hood — Ring Collapse',
+      type: 'Hoodie / Drop',
+      status: 'available',
+      description:
+        'Pressure-tempered fleece with fractured ring sigil. Built for the corridor between dusk and the unknown.',
+    },
+    {
+      id: 'r4',
+      title: 'Ashfall Tee — Mark II',
+      type: 'Tee / Drop',
+      status: 'soldout',
+      description:
+        'Softweight jersey dusted in phantom ash. Print degraded on purpose; edges surrender to noise.',
+    },
+    {
+      id: 'r5',
+      title: 'Veil Crew — Hollow Core',
+      type: 'Crewneck / Relic',
+      status: 'available',
+      description:
+        'Double-knit shell with inner hum. Subtle ring emboss, seen when you look away. Clean, cold, certain.',
+    },
+  ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg">
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">
-          Vibe Coding Platform
-        </h1>
-        <p className="text-gray-600 mb-6">
-          Your AI-powered development environment
-        </p>
-        <div className="text-center">
-          <button
-            onClick={() => setCount(count + 1)}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
-          >
-            Count is {count}
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-}
+    <div className="min-h-screen bg-black text-white">
+      <AnimatePresence mode="wait">
+        {view === 'hero' ? (
+          <motion.div key="hero" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <HeroRing onEnter={() => setView('grid')} />
+          </motion.div>
+        ) : (
+          <motion.div key="grid" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <StockGrid items={items} onSelect={setSelected} onBack={() => setView('hero')} />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-export default App
+      <ItemView item={selected} onClose={() => setSelected(null)} />
+    </div>
+  );
+}
